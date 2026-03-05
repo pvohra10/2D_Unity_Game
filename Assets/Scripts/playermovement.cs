@@ -42,7 +42,7 @@ public class playermovement : MonoBehaviour
         {
             transform.localRotation = Quaternion.Euler(0, 180, 0);
         }
-        else if (rb.linearVelocityY > 0)
+        else if (rb.linearVelocityX > 0)
         {
             transform.localRotation = Quaternion.Euler(0, 0, 0);
         }

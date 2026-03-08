@@ -6,7 +6,7 @@ public class Enemy : MonoBehaviour
     public float speed;
     public Rigidbody2D rb;
     public GameObject bloodEffect;
-    public Transform player;
+    private Transform player;
     public float knockBack_Str = 0.5f;
     bool isKnockedBack;
 
@@ -14,6 +14,17 @@ public class Enemy : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+
+        GameObject playerObj = GameObject.FindWithTag("Player");
+
+        if (playerObj != null)
+        {
+            player = playerObj.transform;
+        }
+        else
+        {
+            Debug.LogWarning("AIDestinationSetter: No object with the tag 'Player' found in the scene!");
+        }
         isKnockedBack = false;
     }
 
@@ -26,11 +37,11 @@ public class Enemy : MonoBehaviour
             Destroy(gameObject);
         }
 
-        float direction = Mathf.Sign(player.position.x - transform.position.x);
+        //float direction = Mathf.Sign(player.position.x - transform.position.x);
 
-        if ( Mathf.Abs(transform.position.x - player.position.x) > 2 && isKnockedBack == false) { 
-            rb.linearVelocity = new Vector2(direction* speed, rb.linearVelocityY);
-        }
+        //if ( Mathf.Abs(transform.position.x - player.position.x) > 2 && isKnockedBack == false) { 
+        //    rb.linearVelocity = new Vector2(direction* speed, rb.linearVelocityY);
+        //}
     }
 
     public void TakeDamage(float damage)

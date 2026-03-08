@@ -9,11 +9,18 @@ public class playerAttack : MonoBehaviour
 
     public LayerMask enemyLayer;
     public Transform attackPos;
+
+
     public float attackRange;
     public float damage = 10;
     private Animator _animator;
     private bool atk;
     private float atkDelay = 0f;
+
+    public float playerHealth = 100f;
+
+
+    public GameObject greenBar;
 
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -78,5 +85,16 @@ public class playerAttack : MonoBehaviour
     {
         bool isAttacking = atk;
         _animator.SetBool("isAttacking", isAttacking);
+    }
+    
+    public void TakeDamage(int damage)
+    {
+        playerHealth -= damage;
+        if (playerHealth <= 0)
+        {
+            Destroy(gameObject);
+        }
+        float healthPercent = playerHealth / 100;
+        greenBar.transform.localScale = new Vector3(healthPercent, 1, 1);
     }
 }

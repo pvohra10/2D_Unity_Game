@@ -21,8 +21,11 @@ public class Shoot_Fireball : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (timeBtwAttack <= 0)
+        if (timeBtwAttack <= 0 && Mathf.Abs(player.position.x - transform.position.x) <= 5)
         {
+
+
+
             //Spawn Fireball and fire at player
 
 

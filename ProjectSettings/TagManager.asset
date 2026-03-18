@@ -5,6 +5,7 @@ TagManager:
   serializedVersion: 3
   tags:
   - Ground
+  - Impact
   layers:
   - Default
   - TransparentFX
@@ -19,7 +20,7 @@ TagManager:
   - Ladder
   - Enemy
   - Player
-  - 
+  - greenbar
   - 
   - 
   - 
@@ -48,8 +49,29 @@ TagManager:
   - name: Ground
     uniqueID: 1664225721
     locked: 0
+  - name: Particles
+    uniqueID: 2400647087
+    locked: 0
+  - name: sheild
+    uniqueID: 1762634041
+    locked: 0
+  - name: signs
+    uniqueID: 2442393053
+    locked: 0
   - name: Player
     uniqueID: 1236774465
+    locked: 0
+  - name: gb
+    uniqueID: 275913517
+    locked: 0
+  - name: Bird
+    uniqueID: 333749617
+    locked: 0
+  - name: Zombie
+    uniqueID: 757662325
+    locked: 0
+  - name: TextBubbles
+    uniqueID: 4137068981
     locked: 0
   m_RenderingLayers:
   - Default

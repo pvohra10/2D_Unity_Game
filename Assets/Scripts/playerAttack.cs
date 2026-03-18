@@ -1,6 +1,8 @@
 using UnityEngine;
+
 using System.Collections;
 
+using Utilities;
 
 public class playerAttack : MonoBehaviour
 {
@@ -17,53 +19,101 @@ public class playerAttack : MonoBehaviour
     private bool atk;
     private float atkDelay = 0f;
 
+    private SpriteRenderer sprite;
     public float playerHealth = 100f;
+
+    bool blocking = false;
+
+    public Rigidbody2D playerRb;
+
+    public ScriptableObject death_handler;
+
+
+    public SpriteRenderer sheild;
 
 
     public GameObject greenBar;
+
+    public AudioSource playerSpeaker;
+    private AudioClip[] Aud;
 
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        Aud = new AudioClip[3];
+        Aud[0] = Resources.Load<AudioClip>("Music/slash_vintage");
+        Aud[1] = Resources.Load<AudioClip>("Music/player_hurt");
+        Aud[2] = Resources.Load<AudioClip>("Music/Sheild_Block");
         _animator = GetComponent<Animator>();
+        sprite = gameObject.GetComponent<SpriteRenderer>();
         atk = false;
     }
 
     // Update is called once per frame
     void Update()
     {
-        atk = false;
+        // 1. Blocking Logic
+        blocking = Input.GetKey(KeyCode.F) && !atk;
 
-        Debug.Log("Update running");
-        if (timeBtwAttack <= 0)
+        // 2. Shield Visuals
+        if (sheild != null)
         {
-            //Thenm you can attack
+            sheild.enabled = blocking;
+        }
+
+        // 3. Attack Logic
+        if (timeBtwAttack <= 0 && !blocking)
+        {
             if (Input.GetMouseButtonDown(0))
             {
-                Debug.Log("Attack Started");
+                atk = true; // Set true to trigger animationd
 
-                atk = true;
                 StartCoroutine(AttackDelay());
-
-                //reset starting val for attacking
                 timeBtwAttack = startTimeBtwAttack;
             }
-
+            else
+            {
+                atk = false; // Ensure it's false if we aren't clicking
+            }
         }
         else
         {
-            //decrease cooldown
             timeBtwAttack -= Time.deltaTime;
+            atk = false; // Reset atk while waiting for cooldown
         }
+
         setAnimation(atk);
+    }
+
+
+    private void FixedUpdate()
+    {
+
+
+            sheild.enabled = blocking;
     }
 
 
     IEnumerator AttackDelay()
     {
+        bool directionLeft = Utilities.tools.isFacingLeft(transform.localScale);
+
+        if (directionLeft)
+        {
+            // Lunge Left
+            playerRb.AddForce(new Vector2(-50, 0), ForceMode2D.Impulse);
+        }
+        else
+        {
+            // Lunge Right
+            playerRb.AddForce(new Vector2(50, 0), ForceMode2D.Impulse);
+        }
         yield return new WaitForSeconds(0.42f); // delay to match animation
 
+
+
+        playerSpeaker.PlayOneShot(Aud[0]);
         Collider2D[] enemiesToDamage = Physics2D.OverlapCircleAll(
             attackPos.position,
             attackRange,
@@ -86,15 +136,39 @@ public class playerAttack : MonoBehaviour
         bool isAttacking = atk;
         _animator.SetBool("isAttacking", isAttacking);
     }
+
     
     public void TakeDamage(int damage)
     {
-        playerHealth -= damage;
-        if (playerHealth <= 0)
+
+        if (!blocking)
         {
-            Destroy(gameObject);
+            playerSpeaker.PlayOneShot(Aud[1]);
+            StartCoroutine(colorRoutine());
+            playerHealth -= damage;
+            if (playerHealth <= 0)
+            {
+                Destroy(gameObject);
+            }
+
+            float healthPercent = playerHealth / 100;
+            greenBar.transform.localScale = new Vector3(healthPercent, 1, 1);
         }
-        float healthPercent = playerHealth / 100;
-        greenBar.transform.localScale = new Vector3(healthPercent, 1, 1);
+        else
+        {
+            playerSpeaker.PlayOneShot(Aud[2]);
+        }
+    }
+
+    IEnumerator colorRoutine()
+    {
+        sprite.color = Color.red;
+        yield return new WaitForSeconds(0.2f);
+        sprite.color = Color.white;
+    }
+
+    public bool returnblocking()
+    {
+        return blocking;
     }
 }
